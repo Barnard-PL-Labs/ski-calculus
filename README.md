@@ -8,9 +8,10 @@ inner loop. Extracted from the Cloud FPGA / Manhattan Reasoning monorepo to be
 developed standalone against the published SDK.
 
 > **SDK note.** This targets the **[`manhattan-reasoning-gym`](https://pypi.org/project/manhattan-reasoning-gym/)**
-> package. The clients here (`client_*.py`) and the scripts under `experiments/`
-> were written against the *pre-PyPI* `mrg.App(...)` interface and **need adapting
-> to the published SDK** — that's the next step.
+> package (v0.1.2). The clients (`client_*.py`) are adapted to the published SDK
+> (`mrg.cloud.App` / `mrg.cloud.RegisterMap`). The scripts under `experiments/`
+> still use the *pre-PyPI* `mrg.App(...)` interface and hardcoded monorepo paths,
+> and are the remaining thing to migrate.
 
 ## Measured results (real ECP5-85 hardware)
 
@@ -53,8 +54,9 @@ stalled at high K — it's what makes K = 32 / 50 buildable. See `GA_ENGINE.md`.
 Run: `pytest tests/` (needs `amaranth` + `pytest`). 51 passing.
 
 **`client_*.py` (repo root)** — SDK clients that program a board and drive the
-engine (`client_sdk.py` reducer demo, `client_sdk_ga.py` GA, `client_k16.py`
-K=16). ⚠️ pre-PyPI `mrg.App` interface — adapt to the published SDK.
+engine, adapted to the published SDK: `client_sdk.py` (reducer demo),
+`client_sdk_ga.py` (GA throughput), `client_k16.py` (K=16 at 120 MHz — the
+headline run). Run e.g. `mrg run client_k16.py`.
 
 **`experiments/`** — the measurement tooling behind the results above: clock
 sweeps, reproducibility runs, K-scaling builds, matmul bit-exact error-rate, and
