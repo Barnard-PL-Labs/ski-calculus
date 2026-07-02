@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+*.egg-info/
+.pytest_cache/
+
+# Amaranth / synthesis build artifacts
+build/
+*.il
+*.json
+*.config
+*.bit
+*.svf
+
+# generated Verilog exports
+*.v
+
+# LaTeX build junk (keep .tex/.bib/.sty/.pdf sources)
+*.aux
+*.bbl
+*.blg
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+
+# OS
+.DS_Store
