@@ -8,10 +8,9 @@ inner loop. Extracted from the Cloud FPGA / Manhattan Reasoning monorepo to be
 developed standalone against the published SDK.
 
 > **SDK note.** This targets the **[`manhattan-reasoning-gym`](https://pypi.org/project/manhattan-reasoning-gym/)**
-> package (v0.1.2). The clients (`client_*.py`) are adapted to the published SDK
-> (`mrg.cloud.App` / `mrg.cloud.RegisterMap`). The scripts under `experiments/`
-> still use the *pre-PyPI* `mrg.App(...)` interface and hardcoded monorepo paths,
-> and are the remaining thing to migrate.
+> package (v0.1.2). The clients (`client_*.py`) and the `experiments/` scripts are
+> adapted to the published SDK — the canonical `mrg.cloud.App` /
+> `mrg.cloud.RegisterMap` surface, with design paths resolved relative to the repo.
 
 ## Measured results (real ECP5-85 hardware)
 
@@ -60,8 +59,11 @@ headline run). Run e.g. `mrg run client_k16.py`.
 
 **`experiments/`** — the measurement tooling behind the results above: clock
 sweeps, reproducibility runs, K-scaling builds, matmul bit-exact error-rate, and
-the candidate-size difficulty explorer. ⚠️ contain hardcoded paths and pre-PyPI
-SDK calls; adapt as needed.
+the candidate-size difficulty explorer. Adapted to the published SDK; design
+paths resolve relative to the repo root, so run them from anywhere. Two notes:
+`mm_errrate.py` drives the `matrix_mult` design, which lives in the main
+Manhattan-Reasoning-Cloud repo (not here); `cand_explore.c` is a pure-CPU search
+with no SDK dependency.
 
 **`paper/`** — the ALIFE LBW paper (`alife-lbw.tex` + `alife-lbw-draft.md`),
 the overclocking section (`overclocking_section.tex`), figures, and the figure

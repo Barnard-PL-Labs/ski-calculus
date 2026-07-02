@@ -1,15 +1,17 @@
-import functools, time
+import functools, os, time
 import manhattan_reasoning_gym as mrg
 import manhattan_reasoning_gym._client as _client
-_client.poll_job = functools.partial(_client.poll_job, timeout=3000)  # ~100 min client wait
-DESIGN="examples/ski_calculus/ski_ga_fpga_k50.py"
-class Regs(mrg.RegisterMap):
+# Extend past the SDK's 40-min default poll to wait out long K=50 P&R.
+_client.poll_job = functools.partial(_client.poll_job, timeout=3000)
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DESIGN = os.path.join(_ROOT, "ski_ga_fpga_k50.py")
+class Regs(mrg.cloud.RegisterMap):
     CTRL=0x00; SEED=0x04; N_INPUTS=0x08; TARGET=0x0C
     MAX_STEPS=0x10; CAND_SIZE=0x14; NUM_CORES=0x18
     TOTAL=0x1C; BEST=0x20; COUNT_BASE=0x40
 N=2; TGT=6; CS=16; MS=2000; RUN_S=5.0; REPS=6
 def run_clock(mhz, board=0):
-    app=mrg.App(f"k50_{mhz}", design=DESIGN, fpga_id=board,
+    app=mrg.cloud.App(f"k50_{mhz}", design=DESIGN, fpga_id=board,
                 sys_clk_freq=int(mhz*1e6), registers=Regs)
     print(f"[{time.strftime('%H:%M')}] [{mhz}MHz] building (~80min)...", flush=True)
     try: app._program()

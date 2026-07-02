@@ -1,10 +1,9 @@
-import functools, time, sys
+import os, time, sys
 import manhattan_reasoning_gym as mrg
-import manhattan_reasoning_gym._client as _client
 from concurrent.futures import ThreadPoolExecutor
-_client.poll_job = functools.partial(_client.poll_job, timeout=900)
-DESIGN="examples/ski_calculus/ski_ga_fpga_k32.py"
-class Regs(mrg.RegisterMap):
+_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DESIGN = os.path.join(_ROOT, "ski_ga_fpga_k32.py")
+class Regs(mrg.cloud.RegisterMap):
     CTRL=0x00; SEED=0x04; N_INPUTS=0x08; TARGET=0x0C
     MAX_STEPS=0x10; CAND_SIZE=0x14; NUM_CORES=0x18
     TOTAL=0x1C; BEST=0x20; COUNT_BASE=0x40
@@ -12,7 +11,7 @@ N_INPUTS=2; TARGET_WORD=6; CAND_SIZE=16; MAX_STEPS=2000; RUN_SECONDS=5.0; REPEAT
 
 def run_clock(clock_hz, board):
     mhz=clock_hz/1e6
-    app=mrg.App(f"gr{int(mhz)}", design=DESIGN, fpga_id=board,
+    app=mrg.cloud.App(f"gr{int(mhz)}", design=DESIGN, fpga_id=board,
                 sys_clk_freq=int(clock_hz), registers=Regs)
     print(f"[{mhz:.0f}MHz fpga{board}] building...", flush=True)
     thrs=[]; solved=0; note=""

@@ -1,10 +1,8 @@
-import functools, time, sys, random
+import time, sys, random
 import manhattan_reasoning_gym as mrg
-import manhattan_reasoning_gym._client as _client
 from concurrent.futures import ThreadPoolExecutor
-_client.poll_job = functools.partial(_client.poll_job, timeout=900)
 N=4; ELEM_BITS=8; TRIALS=150
-class Regs(mrg.RegisterMap):
+class Regs(mrg.cloud.RegisterMap):
     CTRL=0x0000; CYCLES=0x0004; DIM=0x0008; A_BASE=0x0040; B_BASE=0x0080; C_BASE=0x00C0
 def to_signed(w,bits=32): return w-(1<<bits) if w&(1<<(bits-1)) else w
 def flatten(m):
@@ -14,8 +12,10 @@ def rand_mat(rng): return [[rng.randint(-128,127) for _ in range(N)] for _ in ra
 
 def run_clock(clock_hz, board):
     mhz=clock_hz/1e6
-    app=mrg.App(f"mm{int(mhz)}", design="examples/matrix_mult/design.py",
-                fpga_id=board, sys_clk_freq=int(clock_hz), registers=Regs)
+    # NB: the matrix_mult design is NOT in this SKI repo -- it lives in the main
+    # Manhattan-Reasoning-Cloud repo. Point `design=` at that checkout to run this.
+    app=mrg.cloud.App(f"mm{int(mhz)}", design="examples/matrix_mult/design.py",
+                      fpga_id=board, sys_clk_freq=int(clock_hz), registers=Regs)
     rng=random.Random(12345)  # identical matrix stream across all clocks
     r={"mhz":mhz,"built":False,"trials":0,"mult_err":0,"elem_err":0,"note":""}
     print(f"[{mhz:.0f}MHz fpga{board}] building...", flush=True)
