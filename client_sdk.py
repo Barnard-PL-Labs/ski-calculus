@@ -1,7 +1,7 @@
 """SKI combinator-calculus evaluator on the FPGA, via the Cloud FPGA SDK.
 
 Run with:
-    mrg run examples/ski_calculus/client_sdk.py
+    mrg run client_sdk.py
 
 Builds a few SKI terms, reduces each to weak head normal form (WHNF) on the
 FPGA, and checks the hardware result against a pure-Python reference reducer.
@@ -21,7 +21,7 @@ from ski_term import I, K, S, App
 MAX_STEPS = 100_000
 
 
-class Regs(mrg.RegisterMap):
+class Regs(mrg.cloud.RegisterMap):
     # Mirror of design.py's word offsets, in bytes (word * 4). Pinned by tests.
     CTRL       = 0x0000  # W bit0=start; R bit0=done bit1=busy
     STATUS     = 0x0004  # R bit0=overflow bit1=step-limit
@@ -34,9 +34,9 @@ class Regs(mrg.RegisterMap):
     HEAP       = 0x0040  # node i lives at HEAP + i*4
 
 
-app = mrg.App(
+app = mrg.cloud.App(
     "ski_calculus",
-    design="examples/ski_calculus/design.py",
+    design="design.py",
     registers=Regs,
 )
 

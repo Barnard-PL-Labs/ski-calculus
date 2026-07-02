@@ -1,25 +1,19 @@
 """K=16 SKI GA throughput run on real hardware.
 
-Same benchmark as client_sdk_ga.py, but extends the SDK's build-poll timeout so
-the client waits through the longer (~13 min) place-and-route for 16 cores
-instead of giving up at the default 600 s. The build itself succeeds server-side
-regardless; this just keeps the client attached long enough to run the benchmark.
+Same benchmark as client_sdk_ga.py, but at K=16 cores and pinned to 120 MHz --
+the configuration behind the headline ~2.48 M candidates/sec result (past a full
+Apple M4). The ~13 min place-and-route for 16 cores fits comfortably inside the
+SDK's default 40 min build-poll timeout, so no timeout override is needed.
 
-    mrg run examples/ski_calculus/client_k16.py
+    mrg run client_k16.py
 """
 
-import functools
 import time
 
 import manhattan_reasoning_gym as mrg
-import manhattan_reasoning_gym._client as _client
-
-# Wait up to ~1800 s for the build (timeout * _BUILD_POLL_INTERVAL). The server's
-# own build budget is 1800 s, so match it.
-_client.poll_job = functools.partial(_client.poll_job, timeout=900)
 
 
-class Regs(mrg.RegisterMap):
+class Regs(mrg.cloud.RegisterMap):
     CTRL = 0x00; SEED = 0x04; N_INPUTS = 0x08; TARGET = 0x0C
     MAX_STEPS = 0x10; CAND_SIZE = 0x14; NUM_CORES = 0x18
     TOTAL = 0x1C; BEST = 0x20; COUNT_BASE = 0x40
@@ -40,8 +34,8 @@ def target_word(bits):
     return w
 
 
-app = mrg.App("ski_ga_k16", design="examples/ski_calculus/ski_ga_fpga_k16.py",
-              registers=Regs)
+app = mrg.cloud.App("ski_ga_k16", design="ski_ga_fpga_k16.py",
+                    registers=Regs, sys_clk_freq=120_000_000)
 
 
 @app.local_entrypoint()

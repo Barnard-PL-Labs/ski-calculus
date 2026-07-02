@@ -7,7 +7,7 @@ it only seeds the target and drains counters -- so this measures the fabric's
 real evaluation rate.
 
 Run with:
-    mrg run examples/ski_calculus/client_sdk_ga.py
+    mrg run client_sdk_ga.py
 """
 
 import time
@@ -15,7 +15,7 @@ import time
 import manhattan_reasoning_gym as mrg
 
 
-class Regs(mrg.RegisterMap):
+class Regs(mrg.cloud.RegisterMap):
     CTRL       = 0x00   # W bit0=run; R bit0=running bit1=any_busy
     SEED       = 0x04
     N_INPUTS   = 0x08
@@ -44,7 +44,7 @@ def target_word(bits):
     return w
 
 
-app = mrg.App("ski_ga", design="examples/ski_calculus/ski_ga_fpga.py", registers=Regs)
+app = mrg.cloud.App("ski_ga", design="ski_ga_fpga.py", registers=Regs)
 
 
 @app.local_entrypoint()
