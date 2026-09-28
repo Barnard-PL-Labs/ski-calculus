@@ -18,11 +18,19 @@ developed standalone against the published SDK.
 |--------:|------:|-----------:|:---|
 | 16 | 120 MHz | 2.48 M cand/s | 1.02× |
 | 32 |  75 MHz | 2.82 M cand/s | 1.16× |
+| 40 |  50 MHz | 2.48 M cand/s | 1.02× |
 | 50 |  60 MHz | 3.72 M cand/s | 1.54× |
 
 Throughput scales linearly with core count; the design is bit-exact against a
 CPU reference (`cpu_baseline.c`). See `GA_ENGINE.md` for the full writeup and
 `paper/` for the ALIFE late-breaking-work paper.
+
+> **Current stack (2026-09-27).** K=16/32/50 above are July measurements. On
+> today's MRG stack K=16 @ 120 MHz re-measured 2.33 M cand/s (6/6 solved), and
+> **K=50 does not build** (hits the 90-min build timeout; Cloud#79) — K=40 is
+> the largest buildable design. Cost vs renting CPU on Modal (~330K cand/s per
+> core): a busy board is 3.5–8× cheaper per candidate. See
+> `experiments/RESULTS_2026-09-27.md`.
 
 ## Layout
 
